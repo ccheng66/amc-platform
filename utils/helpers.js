@@ -9,6 +9,9 @@ export const formatBodyText = (text) => {
     .replace(/\\bigstar/g, "★")      
     .replace(/\\,/g, " ") 
     .replace(/\^\{\\circ\}/g, "°") 
+    // NEW: Handle LaTeX ellipses!
+    .replace(/\\ldots/g, "...") 
+    .replace(/\\dots/g, "...")
     .replace(/\\?(?:text(?:bf|it)?)\{([^}]+)\}/g, "$1") 
     .replace(/\\?(?:text(?:bf|it)?)(\d+)/g, "$1") 
     .replace(/\\times/g, "×") 
@@ -26,7 +29,10 @@ export const formatOptionText = (opt) => {
   let cleanOpt = opt
     .replace(/^([A-E]\.)\s*\\+\s*/, '$1 ') 
     .replace(/\\\$/g, "$") 
-    .replace(/\\%/g, "%") 
+    .replace(/\\%/g, "%")
+    // NEW: Handle LaTeX ellipses in options!
+    .replace(/\\ldots/g, "...") 
+    .replace(/\\dots/g, "...") 
     .replace(/\\?(d?)frac/g, "\\$1frac") 
     .replace(/\\?(text(?:bf|it)?)\{([^}]+)\}/g, "\\$1{$2}") 
     .replace(/\\?(text(?:bf|it)?)(\d+)/g, "\\$1{$2}"); 
