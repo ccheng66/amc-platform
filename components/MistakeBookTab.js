@@ -95,6 +95,8 @@ export default function MistakeBookTab({ session }) {
                   {Array.isArray(prob.images) ? prob.images.map((imgUrl, i) => <img key={i} src={imgUrl} alt={`Diagram`} style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'contain' }} />) : <img src={prob.images} alt={`Diagram`} style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'contain' }} />}
                 </div> 
               )}
+              
+              {/* Options */}
               {prob.options && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {(Array.isArray(prob.options) ? prob.options : JSON.parse(prob.options || "[]")).map((opt, i) => {
@@ -120,6 +122,17 @@ export default function MistakeBookTab({ session }) {
                   })}
                 </div>
               )}
+
+              {/* NEW: Solution Reveal Box */}
+              {isAnswered && prob.solution && (
+                <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderLeft: '4px solid #0070f3', borderRadius: '4px' }}>
+                  <h4 style={{ margin: '0 0 12px 0', color: '#0070f3', fontSize: '16px' }}>Solution Explanation</h4>
+                  <div style={{ fontSize: '15px', lineHeight: '1.6', color: '#333', overflowX: 'auto' }}>
+                    <Latex>{formatBodyText(prob.solution)}</Latex>
+                  </div>
+                </div>
+              )}
+
             </div>
           );
         })}
