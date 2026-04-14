@@ -18,6 +18,11 @@ export const formatBodyText = (text) => {
     .replace(/\\end\{align\*\}/g, " \\end{aligned} $$")
     .replace(/\\blacklozenge/g, "◆") 
     .replace(/\\bigstar/g, "★")      
+    
+    // NEW: Safely unwrap Small Caps text and absorb preceding math spaces (e.g. "8 \, \textsc{am}" -> "8am")
+    .replace(/\\,\s*\\textsc\{([^}]+)\}/g, "$1") 
+    .replace(/\\textsc\{([^}]+)\}/g, "$1")       
+
     .replace(/\\,/g, " ") 
     .replace(/\^\{\\circ\}/g, "°") 
     .replace(/\\ldots/g, "...") 
@@ -26,10 +31,10 @@ export const formatBodyText = (text) => {
     .replace(/\\right(?![a-zA-Z])/g, "")
     
     // Wrap orphaned fraction chains:
-    .replace(/(\(?\s*\\frac\{[^{}]+\}\{[^{}]+\}(?:[\-\+\=×÷\s\.\(\)0-9]|\\cdot|\\cdots|\\times|\\dots)*)+/g, "$$ $& $$")
+    .replace(/(\(?\s*\\frac\{[^{}]+\}\{[^{}]+\}(?:[\-\+\=×÷\s\.\(\)0-9]|\\cdot|\\cdots|\\times|\\dots)*)+/g, "$$$&$$")
     
-    // NEW: Catch orphaned \cdot math chains (e.g., 8!! = 2 \cdot 4 \cdot 6 \cdot 8)
-    .replace(/((?:\d+!*\s*=\s*)?(?:\d+\s*\\cdot\s*)+\d+)/g, "$$ $1 $$")
+    // Catch orphaned \cdot math chains (e.g., 8!! = 2 \cdot 4 \cdot 6 \cdot 8)
+    .replace(/((?:\d+!*\s*=\s*)?(?:\d+\s*\\cdot\s*)+\d+)/g, "$$$1$$")
 
     .replace(/\\boxed\{((?:[^{}]|\{[^{}]*\})*)\}/g, "$1")
     .replace(/\\?(?:text(?:bf|it)?)\{([^}]+)\}/g, "$1") 
@@ -76,8 +81,8 @@ export const formatOptionText = (opt) => {
     .replace(/\\left(?![a-zA-Z])/g, "") 
     .replace(/\\right(?![a-zA-Z])/g, "")
     
-    .replace(/(\(?\s*\\frac\{[^{}]+\}\{[^{}]+\}(?:[\-\+\=×÷\s\.\(\)0-9]|\\cdot|\\cdots|\\times|\\dots)*)+/g, "$$ $& $$")
-    .replace(/((?:\d+!*\s*=\s*)?(?:\d+\s*\\cdot\s*)+\d+)/g, "$$ $1 $$")
+    .replace(/(\(?\s*\\frac\{[^{}]+\}\{[^{}]+\}(?:[\-\+\=×÷\s\.\(\)0-9]|\\cdot|\\cdots|\\times|\\dots)*)+/g, "$$$&$$")
+    .replace(/((?:\d+!*\s*=\s*)?(?:\d+\s*\\cdot\s*)+\d+)/g, "$$$1$$")
     
     .replace(/\\boxed\{((?:[^{}]|\{[^{}]*\})*)\}/g, "$1")
     
@@ -101,7 +106,7 @@ export const formatOptionText = (opt) => {
     .replace(/⋅\s*⋅/g, "\\cdots ")
     .replace(/⋅/g, "\\cdot ");
 
-  return safeOpt.replace(/^([A-E]\.)\s*(.+)$/, '$1 $$ $2 $$');
+  return safeOpt.replace(/^([A-E]\.)\s*(.+)$/, '$1 $$$2$$');
 };
 
 export function shuffleArray(array) {
@@ -111,4 +116,17 @@ export function shuffleArray(array) {
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;
+}
+
+// NEW HELPER: Guarantees 5 clickable options render even if Supabase options are empty!
+export function parseOptions(optionsData) {
+  const fallback = ["A", "B", "C", "D", "E"];
+  if (!optionsData) return fallback;
+  try {
+    const parsed = Array.isArray(optionsData) ? optionsData : JSON.parse(optionsData);
+    if (parsed.length === 0) return fallback;
+    return parsed;
+  } catch (err) {
+    return fallback;
+  }
 }

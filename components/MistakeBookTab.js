@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabase";
 import Latex from "react-latex-next";
-import { formatBodyText, formatOptionText, shuffleArray } from "../utils/helpers";
+import { formatBodyText, formatOptionText, shuffleArray, parseOptions } from "../utils/helpers";
 
 export default function MistakeBookTab({ session }) {
   const [mistakeProblems, setMistakeProblems] = useState([]);
@@ -99,7 +99,7 @@ export default function MistakeBookTab({ session }) {
               {/* Options */}
               {prob.options && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {(Array.isArray(prob.options) ? prob.options : JSON.parse(prob.options || "[]")).map((opt, i) => {
+                  {parseOptions(prob.options).map((opt, i) => {
                     let cleanOpt = formatOptionText(opt);
                     const optionLetter = cleanOpt.charAt(0); 
                     const isSelected = mistakeAnswers[prob.id] === optionLetter; 

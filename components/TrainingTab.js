@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../utils/supabase";
 import Latex from "react-latex-next";
-import { formatBodyText, formatOptionText, shuffleArray } from "../utils/helpers";
+import { formatBodyText, formatOptionText, shuffleArray, parseOptions } from "../utils/helpers";
 
 export default function TrainingTab({ session, userLevels, setUserLevels }) {
   const [trainingDomain, setTrainingDomain] = useState("");
@@ -143,7 +143,7 @@ export default function TrainingTab({ session, userLevels, setUserLevels }) {
                 {/* Options */}
                 {prob.options && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {(Array.isArray(prob.options) ? prob.options : JSON.parse(prob.options || "[]")).map((opt, i) => {
+                    {parseOptions(prob.options).map((opt, i) => {
                       let cleanOpt = formatOptionText(opt);
                       const optionLetter = cleanOpt.charAt(0);
                       const isAnswered = !!trainingAnswers[prob.id]; 
