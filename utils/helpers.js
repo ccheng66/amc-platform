@@ -34,6 +34,12 @@ export const formatBodyText = (text) => {
     .replace(/\\boxed\{((?:[^{}]|\{[^{}]*\})*)\}/g, "$1")
     .replace(/\\?(?:text(?:bf|it)?)\{([^}]+)\}/g, "$1") 
     .replace(/\\?(?:text(?:bf|it)?)(\d+)/g, "$1") 
+    
+    // SAFELY BROUGHT BACK: Masking protects good math, these catch the orphaned ones!
+    .replace(/\\times/g, "×") 
+    .replace(/\\cdot/g, "·")  
+    .replace(/\\div/g, "÷")   
+
     .replace(/\\\$/g, "$")    
     .replace(/\\%/g, "%")     
     .replace(/\\triangle/g, "△") 
@@ -74,6 +80,12 @@ export const formatOptionText = (opt) => {
     .replace(/((?:\d+!*\s*=\s*)?(?:\d+\s*\\cdot\s*)+\d+)/g, "$$ $1 $$")
     
     .replace(/\\boxed\{((?:[^{}]|\{[^{}]*\})*)\}/g, "$1")
+    
+    // SAFELY BROUGHT BACK FOR OPTIONS TOO
+    .replace(/\\times/g, "×") 
+    .replace(/\\cdot/g, "·")  
+    .replace(/\\div/g, "÷")   
+    
     .replace(/\\\$/g, "$") 
     .replace(/\\?(d?)frac/g, "\\$1frac") 
     .replace(/\\?(text(?:bf|it)?)\{([^}]+)\}/g, "\\$1{$2}") 
